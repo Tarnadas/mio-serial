@@ -1,16 +1,16 @@
 //! Unix impl of mio-enabled serial ports.
-use std::convert::AsRef;
+
 use std::io::{self, Read, Write};
 use std::os::unix::prelude::*;
-use std::path::Path;
 use std::time::Duration;
 
-use mio::unix::EventedFd;
-use mio::{Evented, Poll, PollOpt, Ready, Token};
+use mio::event::Source;
+use mio::unix::SourceFd;
+use mio::{Interest, Registry, Token};
 
-use serialport::posix::TTYPort;
-use serialport::prelude::*;
-use serialport::{Error, ErrorKind};
+use serialport::{
+    ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity, SerialPort, StopBits, TTYPort,
+};
 
 use nix::sys::termios::{self, SetArg, SpecialCharacterIndices};
 use nix::{self, libc};
@@ -32,39 +32,17 @@ fn map_nix_error(e: nix::Error) -> Error {
 }
 
 impl Serial {
-    /// Open a nonblocking serial port from the provided path.
+    /// Open a non-blocking serial port from the provided port.
     ///
     /// ## Example
     ///
     /// ```ignore
     /// use std::path::Path;
-    /// use mio_serial::unix::Serial;
-    /// use mio_serial::SerialPortSettings;
-    ///
-    /// let tty_name = Path::new("/dev/ttyUSB0");
-    ///
-    /// let serial = Serial::from_path(tty_name, &SerialPortSettings::default()).unwrap();
-    /// ```
-    pub fn from_path<T: AsRef<Path>>(
-        path: T,
-        settings: &SerialPortSettings,
-    ) -> crate::Result<Self> {
-        let port = TTYPort::open(path.as_ref(), settings)?;
-        Serial::from_serial(port)
-    }
-
-    /// Convert an existing `serialport::posix::TTYPort` struct.
-    ///
-    ///
-    /// ## Example
-    ///
-    /// ```ignore
-    /// use std::path::Path;
-    /// use serialport::posix::TTYPort;
+    /// use serialport::TTYPort;
     /// use mio_serial::unix::Serial;
     ///
-    /// let tty_name = Path::new("/dev/ttyUSB0");
-    /// let blocking_serial = TTYPort::open(tty_path).unwrap();
+    /// let builder = serialport::new(tty_path, 9600);
+    /// let blocking_serial = TTYPort::open(&builder).unwrap();
     ///
     /// let serial = Serial::from_serial(blocking_serial).unwrap();
     /// # fn main() {}
@@ -138,11 +116,6 @@ impl Serial {
 }
 
 impl SerialPort for Serial {
-    /// Returns a struct with the current port settings
-    fn settings(&self) -> SerialPortSettings {
-        self.inner.settings()
-    }
-
     /// Return the name associated with the serial port, if known.
     fn name(&self) -> Option<String> {
         self.inner.name()
@@ -200,15 +173,6 @@ impl SerialPort for Serial {
     /// to required for trait completeness.
     fn timeout(&self) -> Duration {
         Duration::from_secs(0)
-    }
-
-    // Port settings setters
-
-    /// Applies all settings for a struct. This isn't guaranteed to involve only
-    /// a single call into the driver, though that may be done on some
-    /// platforms.
-    fn set_all(&mut self, settings: &SerialPortSettings) -> crate::Result<()> {
-        self.inner.set_all(settings)
     }
 
     /// Sets the baud rate.
@@ -393,6 +357,16 @@ impl SerialPort for Serial {
     fn try_clone(&self) -> crate::Result<Box<dyn SerialPort>> {
         self.inner.try_clone()
     }
+
+    /// Start transmitting a break
+    fn set_break(&self) -> crate::Result<()> {
+        self.inner.set_break()
+    }
+
+    /// Stop transmitting a break
+    fn clear_break(&self) -> crate::Result<()> {
+        self.inner.clear_break()
+    }
 }
 
 macro_rules! uninterruptibly {
@@ -503,28 +477,26 @@ impl FromRawFd for Serial {
     }
 }
 
-impl Evented for Serial {
+impl Source for Serial {
     fn register(
-        &self,
-        poll: &Poll,
+        &mut self,
+        registry: &Registry,
         token: Token,
-        interest: Ready,
-        opts: PollOpt,
+        interests: Interest,
     ) -> io::Result<()> {
-        EventedFd(&self.as_raw_fd()).register(poll, token, interest, opts)
+        SourceFd(&self.as_raw_fd()).register(registry, token, interests)
     }
 
     fn reregister(
-        &self,
-        poll: &Poll,
+        &mut self,
+        registry: &Registry,
         token: Token,
-        interest: Ready,
-        opts: PollOpt,
+        interests: Interest,
     ) -> io::Result<()> {
-        EventedFd(&self.as_raw_fd()).reregister(poll, token, interest, opts)
+        SourceFd(&self.as_raw_fd()).reregister(registry, token, interests)
     }
 
-    fn deregister(&self, poll: &Poll) -> io::Result<()> {
-        EventedFd(&self.as_raw_fd()).deregister(poll)
+    fn deregister(&mut self, registry: &Registry) -> io::Result<()> {
+        SourceFd(&self.as_raw_fd()).deregister(registry)
     }
 }

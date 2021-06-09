@@ -2,13 +2,11 @@
 //! You need to enable the `tokio` feature to use this.
 //!
 
-use crate::{
-    ClearBuffer, DataBits, FlowControl, Parity, Serial, SerialPort, SerialPortSettings, StopBits,
-};
+use crate::{ClearBuffer, DataBits, FlowControl, Parity, Serial, SerialPort, StopBits};
 
 use futures::ready;
+use serialport::TTYPort;
 use std::io::{self, Read, Write};
-use std::path::Path;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 use std::time::Duration;
@@ -21,13 +19,10 @@ pub struct AsyncSerial {
 }
 
 impl AsyncSerial {
-    /// Open serial port from a provided path, using the default reactor.
-    pub fn from_path<P>(path: P, settings: &SerialPortSettings) -> io::Result<AsyncSerial>
-    where
-        P: AsRef<Path>,
-    {
-        let port = Serial::from_path(path.as_ref(), settings)?;
-        let io = AsyncFd::new(port)?;
+    /// Open a non-blocking tokio-compatible serial port from the provided port.
+    pub fn from_serial(port: TTYPort) -> io::Result<AsyncSerial> {
+        let serial = Serial::from_serial(port)?;
+        let io = AsyncFd::new(serial)?;
 
         Ok(AsyncSerial { io })
     }
@@ -77,10 +72,6 @@ impl AsyncSerial {
 }
 
 impl SerialPort for AsyncSerial {
-    fn settings(&self) -> SerialPortSettings {
-        self.io.get_ref().settings()
-    }
-
     fn name(&self) -> Option<String> {
         self.io.get_ref().name()
     }
@@ -107,10 +98,6 @@ impl SerialPort for AsyncSerial {
 
     fn timeout(&self) -> Duration {
         Duration::from_secs(0)
-    }
-
-    fn set_all(&mut self, settings: &SerialPortSettings) -> crate::Result<()> {
-        self.io.get_mut().set_all(settings)
     }
 
     fn set_baud_rate(&mut self, baud_rate: u32) -> crate::Result<()> {
@@ -175,6 +162,16 @@ impl SerialPort for AsyncSerial {
 
     fn try_clone(&self) -> crate::Result<Box<dyn SerialPort>> {
         self.io.get_ref().try_clone()
+    }
+
+    /// Start transmitting a break
+    fn set_break(&self) -> crate::Result<()> {
+        self.io.get_ref().set_break()
+    }
+
+    /// Stop transmitting a break
+    fn clear_break(&self) -> crate::Result<()> {
+        self.io.get_ref().clear_break()
     }
 }
 

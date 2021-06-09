@@ -6,7 +6,6 @@ extern crate serialport;
 
 use std::io::{Read, Write};
 use std::os::unix::prelude::*;
-use std::path::Path;
 use std::str;
 
 use mio_serial::unix::Serial;
@@ -20,25 +19,11 @@ fn get_available_serialport_name() -> Option<String> {
 
 #[test]
 #[ignore]
-fn test_from_path() {
-    let tty_path = get_available_serialport_name().expect("No available serial ports.");
-
-    let serial = Serial::from_path(&tty_path, &mio_serial::SerialPortSettings::default())
-        .unwrap_or_else(|_| panic!("Unable to open serial port: {}", &tty_path));
-
-    assert!(serial.as_raw_fd() > 0, "Illegal file descriptor.");
-}
-
-#[test]
-#[ignore]
 fn test_from_serial() {
     let tty_path = get_available_serialport_name().expect("No available serial ports.");
 
-    let tty_port = serialport::posix::TTYPort::open(
-        Path::new(&tty_path),
-        &mio_serial::SerialPortSettings::default(),
-    )
-    .unwrap_or_else(|_| panic!("Unable to open serial port: {}", &tty_path));
+    let builder = serialport::new(tty_path, 9600);
+    let tty_port = serialport::TTYPort::open(&builder).unwrap();
 
     let serial = Serial::from_serial(tty_port).expect("Unable to wrap TTYPort.");
 

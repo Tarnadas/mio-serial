@@ -15,20 +15,7 @@ extern crate tokio_crate as tokio;
 
 // Enums, Structs, and Traits from the serialport crate
 pub use serialport::{
-    // Enums
-    ClearBuffer,
-    DataBits,
-    // Structs
-    Error,
-    ErrorKind,
-    FlowControl,
-    Parity,
-    // Traits
-    SerialPort,
-
-    SerialPortInfo,
-    SerialPortSettings,
-
+    ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity, SerialPort, SerialPortInfo,
     StopBits,
 };
 
