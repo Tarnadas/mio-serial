@@ -1,20 +1,16 @@
 [package]
-name = "mio-serial"
-version = "3.3.1"
-authors = ["Zac Berkowitz <zac.berkowitz@gmail.com>"]
-description = "A serial port implementation for mio"
+name = "serial-io"
+version = "0.1.0"
+authors = ["Mario Reder <mario.reder@pm.me>", "Zac Berkowitz <zac.berkowitz@gmail.com>"]
+description = "A serial port implementation for mio and tokio"
 license = "MIT"
-homepage = "https://github.com/berkowski/mio-serial"
-repository = "https://github.com/berkowski/mio-serial"
-documentation = "http://docs.rs/mio-serial"
+homepage = "https://github.com/tarnadas/serial-io"
+repository = "https://github.com/tarnadas/serial-io"
+documentation = "http://docs.rs/serial-io"
 readme = "README.md"
-keywords = ["rs232", "serial", "mio"]
+keywords = ["rs232", "serial", "mio", "tokio"]
 categories = ["asynchronous", "hardware-support"]
 edition = "2018"
-
-[badges]
-appveyor = { repository = "berkowski/mio-serial", service = "github" }
-travis-ci = { repository = "berkowski/mio-serial", service = "github" }
 
 [features]
 default = ["libudev"]

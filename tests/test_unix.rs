@@ -1,17 +1,17 @@
 //! Tests for the Unix impl of `mio_serial::unix::Serial`
 #![cfg(unix)]
 
-extern crate mio_serial;
+extern crate serial_io;
 extern crate serialport;
 
 use std::io::{Read, Write};
 use std::os::unix::prelude::*;
 use std::str;
 
-use mio_serial::unix::Serial;
+use serial_io::unix::Serial;
 
 fn get_available_serialport_name() -> Option<String> {
-    match mio_serial::available_ports() {
+    match serial_io::available_ports() {
         Err(_) => None,
         Ok(ports) => ports.into_iter().map(|s| s.port_name).next(),
     }
