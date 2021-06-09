@@ -18,12 +18,14 @@ travis-ci = { repository = "berkowski/mio-serial", service = "github" }
 
 [features]
 default = ["libudev"]
-
 libudev = ["serialport/libudev"]
+tokio = ["tokio_crate", "futures"]
 
 [dependencies]
+futures = { version = "0.3", optional = true }
 mio = "^0.6"
 serialport = { version = "~3.3", default-features = false }
+tokio_crate = { package = "tokio", version = "1", features = ["net"], default-features = false, optional = true }
 
 [target.'cfg(unix)'.dependencies]
 nix = "^0.17"
@@ -35,3 +37,6 @@ mio-named-pipes = "0.1.5"
 [[example]]
 name = "serial_printline"
 path = "examples/serial_printline.rs"
+
+[package.metadata.docs.rs]
+features = ["tokio"]

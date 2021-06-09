@@ -5,10 +5,13 @@
 //! **Windows support is present but largely untested by the author**
 //!
 //! ## Links
-//!   - repo:  https://github.com/berkowski/mio-serial
-//!   - docs:  https://docs.rs/mio-serial
+//!   - repo:  <https://github.com/berkowski/mio-serial>
+//!   - docs:  <https://docs.rs/mio-serial>
 #![deny(missing_docs)]
 #![warn(rust_2018_idioms)]
+
+#[cfg(feature = "tokio")]
+extern crate tokio_crate as tokio;
 
 // Enums, Structs, and Traits from the serialport crate
 pub use serialport::{
@@ -40,6 +43,9 @@ pub mod windows;
 
 #[cfg(unix)]
 pub use unix::Serial;
+
+#[cfg(all(unix, feature = "tokio"))]
+pub use unix::tokio::AsyncSerial;
 
 #[cfg(windows)]
 pub use windows::Serial;
