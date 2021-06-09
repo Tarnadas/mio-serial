@@ -14,7 +14,7 @@ use mio_serial::unix::Serial;
 fn get_available_serialport_name() -> Option<String> {
     match mio_serial::available_ports() {
         Err(_) => None,
-        Ok(ports) => ports.into_iter().map(|s| s.port_name).nth(0),
+        Ok(ports) => ports.into_iter().map(|s| s.port_name).next(),
     }
 }
 
@@ -24,7 +24,7 @@ fn test_from_path() {
     let tty_path = get_available_serialport_name().expect("No available serial ports.");
 
     let serial = Serial::from_path(&tty_path, &mio_serial::SerialPortSettings::default())
-        .expect(&format!("Unable to open serial port: {}", &tty_path));
+        .unwrap_or_else(|_| panic!("Unable to open serial port: {}", &tty_path));
 
     assert!(serial.as_raw_fd() > 0, "Illegal file descriptor.");
 }
@@ -38,7 +38,7 @@ fn test_from_serial() {
         Path::new(&tty_path),
         &mio_serial::SerialPortSettings::default(),
     )
-    .expect(&format!("Unable to open serial port: {}", &tty_path));
+    .unwrap_or_else(|_| panic!("Unable to open serial port: {}", &tty_path));
 
     let serial = Serial::from_serial(tty_port).expect("Unable to wrap TTYPort.");
 

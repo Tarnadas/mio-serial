@@ -59,8 +59,6 @@ impl Serial {
     /// ## Example
     ///
     /// ```ignore
-    /// extern crate serialport;
-    ///
     /// use std::path::Path;
     /// use serialport::posix::TTYPort;
     /// use mio_serial::unix::Serial;
