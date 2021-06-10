@@ -24,6 +24,11 @@ jobs:
         experimental: [false]
         include:
           - rust: nightly
+            cargo-args:
+              - ''
+              - --features tokio
+              - --no-default-features
+              - --no-default-features --features tokio
             experimental: true
 
     steps:
@@ -142,6 +147,11 @@ jobs:
         experimental: [false]
         include:
           - rust: nightly
+            cargo-args:
+              - ''
+              - --features tokio
+              - --no-default-features
+              - --no-default-features --features tokio
             experimental: true
 
     steps:
