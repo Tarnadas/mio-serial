@@ -2,6 +2,9 @@ on: [push, pull_request]
 
 name: Test
 
+env:
+  RUST_BACKTRACE: full
+
 jobs:
   test-linux:
     runs-on: ubuntu-latest
@@ -13,12 +16,21 @@ jobs:
           - stable
           - beta
           - 1.45.0
+        cargo-args:
+          - ''
+          - --features tokio
+          - --no-default-features
+          - --no-default-features --features tokio
         experimental: [false]
         include:
           - rust: nightly
             experimental: true
 
     steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get install libudev-dev
+
       - uses: actions/checkout@v2
         name: Checkout
 
@@ -30,19 +42,25 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install libudev-dev
+      - name: Setup Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ matrix.check-args }}-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions-rs/cargo@v1
         name: Check
         with:
           command: check
+          args: ${{ matrix.cargo-args }}
 
       - uses: actions-rs/cargo@v1
         name: Test
         with:
           command: test
+          args: ${{ matrix.cargo-args }}
 
       - uses: actions-rs/cargo@v1
         name: Fmt
@@ -54,7 +72,7 @@ jobs:
         name: Clippy
         with:
           command: clippy
-          args: -- -D warnings
+          args: ${{ matrix.cargo-args }} -- -D warnings
 
   # TODO reimplement Windows support
   # test-windows:
@@ -116,6 +134,11 @@ jobs:
           - stable
           - beta
           - 1.45.0
+        cargo-args:
+          - ''
+          - --features tokio
+          - --no-default-features
+          - --no-default-features --features tokio
         experimental: [false]
         include:
           - rust: nightly
@@ -133,15 +156,25 @@ jobs:
           override: true
           components: rustfmt, clippy
 
+      - name: Setup Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ matrix.check-args }}-${{ hashFiles('**/Cargo.lock') }}
+
       - uses: actions-rs/cargo@v1
         name: Check
         with:
           command: check
+          args: ${{ matrix.cargo-args }}
 
       - uses: actions-rs/cargo@v1
         name: Test
         with:
           command: test
+          args: ${{ matrix.cargo-args }}
 
       - uses: actions-rs/cargo@v1
         name: Fmt
@@ -153,4 +186,4 @@ jobs:
         name: Clippy
         with:
           command: clippy
-          args: -- -D warnings
+          args: ${{ matrix.cargo-args }} -- -D warnings
