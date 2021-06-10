@@ -1,8 +1,8 @@
 [package]
 name = "serial-io"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Mario Reder <mario.reder@pm.me>", "Zac Berkowitz <zac.berkowitz@gmail.com>"]
-description = "A serial port implementation for mio and tokio"
+description = "A serial port implementation"
 license = "MIT"
 homepage = "https://github.com/tarnadas/serial-io-rs"
 repository = "https://github.com/tarnadas/serial-io-rs"

@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [0.2.0] 2021-06-10
+
+### Added
+
 - Added tokio example
 
 ### Changed
 
 - (BREAKING) remove `unix` and `windows` export. They are implementation details and `Serial` is reexported already
 - Reexport `new` as `build` and `TTYPort` from serialport-rs
-
-### Fixed
+- Hint about temporarily dropped Windows support
 
 ## [0.1.1] 2021-06-09
 
