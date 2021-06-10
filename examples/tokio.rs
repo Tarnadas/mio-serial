@@ -2,7 +2,7 @@ extern crate tokio_crate as tokio;
 
 use bytes::BytesMut;
 use futures::stream::StreamExt;
-use serial_io::{build, AsyncSerial, TTYPort};
+use serial_io::{build, AsyncSerial};
 use std::{env, io, str};
 use tokio_util::codec::{Decoder, Encoder};
 
@@ -44,8 +44,7 @@ pub async fn main() {
     let tty_path = args.nth(1).unwrap_or_else(|| DEFAULT_TTY.into());
 
     let builder = build(tty_path, 9600);
-    let port = TTYPort::open(&builder).unwrap();
-    let mut rx = AsyncSerial::from_serial(port).unwrap();
+    let mut rx = AsyncSerial::from_builder(&builder).unwrap();
 
     #[cfg(unix)]
     rx.set_exclusive(false)

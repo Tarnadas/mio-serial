@@ -9,7 +9,8 @@ use mio::unix::SourceFd;
 use mio::{Interest, Registry, Token};
 
 use serialport::{
-    ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity, SerialPort, StopBits, TTYPort,
+    ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity, SerialPort, SerialPortBuilder,
+    StopBits, TTYPort,
 };
 
 use nix::sys::termios::{self, SetArg, SpecialCharacterIndices};
@@ -32,7 +33,7 @@ fn map_nix_error(e: nix::Error) -> Error {
 }
 
 impl Serial {
-    /// Open a non-blocking serial port from the provided port.
+    /// Open a non-blocking serial port from the provided builder.
     ///
     /// ## Example
     ///
@@ -40,12 +41,15 @@ impl Serial {
     /// use serial_io::{build, Serial, TTYPort};
     ///
     /// let builder = build(tty_path, 9600);
-    /// let blocking_serial = TTYPort::open(&builder).unwrap();
-    ///
-    /// let serial = Serial::from_serial(blocking_serial).unwrap();
+    /// let serial = Serial::from_builder(&builder).unwrap();
     /// # fn main() {}
     /// ```
-    pub fn from_serial(port: TTYPort) -> crate::Result<Self> {
+    pub fn from_builder(builder: &SerialPortBuilder) -> crate::Result<Self> {
+        let port = TTYPort::open(builder).unwrap();
+        Self::from_serial(port)
+    }
+
+    fn from_serial(port: TTYPort) -> crate::Result<Self> {
         // Get the termios structure
         let mut t = termios::tcgetattr(port.as_raw_fd()).map_err(map_nix_error)?;
 

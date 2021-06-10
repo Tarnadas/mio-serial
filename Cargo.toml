@@ -1,6 +1,6 @@
 [package]
 name = "serial-io"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Mario Reder <mario.reder@pm.me>", "Zac Berkowitz <zac.berkowitz@gmail.com>"]
 description = "A serial port implementation"
 license = "MIT"

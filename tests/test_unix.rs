@@ -8,7 +8,7 @@ use std::io::{Read, Write};
 use std::os::unix::prelude::*;
 use std::str;
 
-use serial_io::{build, Serial, TTYPort};
+use serial_io::{build, Serial};
 
 fn get_available_serialport_name() -> Option<String> {
     match serial_io::available_ports() {
@@ -19,13 +19,12 @@ fn get_available_serialport_name() -> Option<String> {
 
 #[test]
 #[ignore]
-fn test_from_serial() {
+fn test_from_builder() {
     let tty_path = get_available_serialport_name().expect("No available serial ports.");
 
     let builder = build(tty_path, 9600);
-    let tty_port = TTYPort::open(&builder).unwrap();
 
-    let serial = Serial::from_serial(tty_port).expect("Unable to wrap TTYPort.");
+    let serial = Serial::from_builder(&builder).expect("Unable to wrap TTYPort.");
 
     assert!(serial.as_raw_fd() > 0, "Illegal file descriptor.");
 }

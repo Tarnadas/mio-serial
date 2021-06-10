@@ -5,7 +5,7 @@
 use crate::{ClearBuffer, DataBits, FlowControl, Parity, Serial, SerialPort, StopBits};
 
 use futures::ready;
-use serialport::TTYPort;
+use serialport::SerialPortBuilder;
 use std::io::{self, Read, Write};
 use std::pin::Pin;
 use std::task::{Context, Poll};
@@ -20,8 +20,8 @@ pub struct AsyncSerial {
 
 impl AsyncSerial {
     /// Open a non-blocking tokio-compatible serial port from the provided port.
-    pub fn from_serial(port: TTYPort) -> io::Result<AsyncSerial> {
-        let serial = Serial::from_serial(port)?;
+    pub fn from_builder(builder: &SerialPortBuilder) -> io::Result<AsyncSerial> {
+        let serial = Serial::from_builder(builder)?;
         let io = AsyncFd::new(serial)?;
 
         Ok(AsyncSerial { io })

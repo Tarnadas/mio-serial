@@ -13,16 +13,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+## [0.3.0] 2021-06-10
+
+### Added
+
+- Reexport `SerialPortBuilder` from serialport-rs
+
+### Changed
+
+- (BREAKING) Removed platform specific `TTYPort`
+- (BREAKING) Replaced `Serial::from_serial` with `Serial::from_builder`
+
+### Fixed
+
 ## [0.2.0] 2021-06-10
 
 ### Added
 
 - Added tokio example
+- Reexport `new` as `build` and `TTYPort` from serialport-rs
 
 ### Changed
 
 - (BREAKING) remove `unix` and `windows` export. They are implementation details and `Serial` is reexported already
-- Reexport `new` as `build` and `TTYPort` from serialport-rs
 - Hint about temporarily dropped Windows support
 
 ## [0.1.1] 2021-06-09

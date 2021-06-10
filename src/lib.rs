@@ -22,7 +22,7 @@ extern crate tokio_crate as tokio;
 // Enums, Structs, and Traits from the serialport crate
 pub use serialport::{
     available_ports, new as build, ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity,
-    SerialPort, SerialPortInfo, StopBits, TTYPort,
+    SerialPort, SerialPortBuilder, SerialPortInfo, StopBits,
 };
 
 #[cfg(unix)]
