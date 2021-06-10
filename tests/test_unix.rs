@@ -8,7 +8,7 @@ use std::io::{Read, Write};
 use std::os::unix::prelude::*;
 use std::str;
 
-use serial_io::unix::Serial;
+use serial_io::{build, Serial, TTYPort};
 
 fn get_available_serialport_name() -> Option<String> {
     match serial_io::available_ports() {
@@ -22,8 +22,8 @@ fn get_available_serialport_name() -> Option<String> {
 fn test_from_serial() {
     let tty_path = get_available_serialport_name().expect("No available serial ports.");
 
-    let builder = serialport::new(tty_path, 9600);
-    let tty_port = serialport::TTYPort::open(&builder).unwrap();
+    let builder = build(tty_path, 9600);
+    let tty_port = TTYPort::open(&builder).unwrap();
 
     let serial = Serial::from_serial(tty_port).expect("Unable to wrap TTYPort.");
 

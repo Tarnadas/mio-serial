@@ -1,10 +1,8 @@
 //! Simple example that echoes received serial traffic to stdout
-extern crate mio;
-extern crate serial_io;
 
 #[cfg(unix)]
 use mio::{Events, Interest, Poll, Token};
-use serialport::TTYPort;
+use serial_io::{build, Serial, TTYPort};
 use std::env;
 use std::io;
 use std::io::Read;
@@ -31,9 +29,9 @@ pub fn main() {
 
     // Create the listener
     println!("Opening {} at 9600,8N1", &tty_path);
-    let builder = serialport::new(tty_path, 9600);
+    let builder = build(tty_path, 9600);
     let port = TTYPort::open(&builder).unwrap();
-    let mut rx = serial_io::Serial::from_serial(port).unwrap();
+    let mut rx = Serial::from_serial(port).unwrap();
 
     poll.registry()
         .register(&mut rx, SERIAL_TOKEN, Interest::READABLE)

@@ -1,12 +1,18 @@
-//! # mio-serial - Serial port I/O for mio
+//! # serial-io: A serial port IO library
 //!
-//! This crate provides a serial port implementation compatable with mio.
+//! serial-io is a fork of [mio-serial](https://github.com/berkowski/mio-serial) with
+//! support for the [tokio runtime](https://tokio.rs/).
+//! It combines therefore [tokio-serial](https://github.com/berkowski/tokio-serial) and adds support
+//! for tokio version 1.
+//!
+//! serial-io provides a serial port implementation using [mio](https://github.com/carllerche/mio).
 //!
 //! **Windows support is present but largely untested by the author**
 //!
 //! ## Links
-//!   - repo:  <https://github.com/berkowski/mio-serial>
-//!   - docs:  <https://docs.rs/mio-serial>
+//!   - repo:  <https://github.com/tarnadas/serial-io>
+//!   - docs:  <https://docs.rs/serial-io>
+
 #![deny(missing_docs)]
 #![warn(rust_2018_idioms)]
 
@@ -15,18 +21,15 @@ extern crate tokio_crate as tokio;
 
 // Enums, Structs, and Traits from the serialport crate
 pub use serialport::{
-    ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity, SerialPort, SerialPortInfo,
-    StopBits,
+    available_ports, new as build, ClearBuffer, DataBits, Error, ErrorKind, FlowControl, Parity,
+    SerialPort, SerialPortInfo, StopBits, TTYPort,
 };
 
-// Re-export port-enumerating utility function.
-pub use serialport::available_ports;
-
 #[cfg(unix)]
-pub mod unix;
+mod unix;
 
 #[cfg(windows)]
-pub mod windows;
+mod windows;
 
 #[cfg(unix)]
 pub use unix::Serial;

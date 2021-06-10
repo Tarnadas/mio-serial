@@ -37,11 +37,9 @@ impl Serial {
     /// ## Example
     ///
     /// ```ignore
-    /// use std::path::Path;
-    /// use serialport::TTYPort;
-    /// use mio_serial::unix::Serial;
+    /// use serial_io::{build, Serial, TTYPort};
     ///
-    /// let builder = serialport::new(tty_path, 9600);
+    /// let builder = build(tty_path, 9600);
     /// let blocking_serial = TTYPort::open(&builder).unwrap();
     ///
     /// let serial = Serial::from_serial(blocking_serial).unwrap();
@@ -79,7 +77,7 @@ impl Serial {
     /// ## Examples
     ///
     /// ```
-    /// use mio_serial::unix::Serial;
+    /// use serial_io::Serial;
     ///
     /// let (master, slave) = Serial::pair().unwrap();
     /// ```

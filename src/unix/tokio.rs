@@ -1,4 +1,4 @@
-//! Async interface to mio-serial via tokio.
+//! Async interface to serial-io via tokio.
 //! You need to enable the `tokio` feature to use this.
 //!
 
