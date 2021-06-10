@@ -24,11 +24,16 @@ jobs:
         experimental: [false]
         include:
           - rust: nightly
-            cargo-args:
-              - ''
-              - --features tokio
-              - --no-default-features
-              - --no-default-features --features tokio
+            cargo-args: ''
+            experimental: true
+          - rust: nightly
+            cargo-args: --features tokio
+            experimental: true
+          - rust: nightly
+            cargo-args: --no-default-features
+            experimental: true
+          - rust: nightly
+            cargo-args: --no-default-features --features tokio
             experimental: true
 
     steps:
