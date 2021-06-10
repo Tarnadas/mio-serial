@@ -10,6 +10,8 @@ for tokio version 1.
 
 serial-io provides a serial port implementation using [mio](https://github.com/carllerche/mio).
 
+**Windows support is present but largely untested by the author**
+
 ## Usage
 
 Add `serial-io` to you `Cargo.toml`:
@@ -17,6 +19,13 @@ Add `serial-io` to you `Cargo.toml`:
 ```toml
 [dependencies]
 serial-io = "0.1"
+```
+
+Optionally enable `tokio` feature:
+
+```toml
+[dependencies]
+serial-io = { version = "0.1", features = ["tokio] }
 ```
 
 ## Features
@@ -30,7 +39,7 @@ cargo build --no-default-features
 
 ## Examples
 
-A few examples can be found [here](https://github.com/berkowski/mio-serial/tree/master/examples).
+A few examples can be found [here](https://github.com/tarnadas/serial-io/tree/master/examples).
 
 ## License
 
