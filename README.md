@@ -10,7 +10,7 @@ for tokio version 1.
 
 serial-io provides a serial port implementation using [mio](https://github.com/carllerche/mio).
 
-**Windows support is present but largely untested by the author**
+**Windows support has been dropped until Tokio provides a serial interface**
 
 ## Usage
 
