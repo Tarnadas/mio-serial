@@ -2,6 +2,9 @@ on: [push, pull_request]
 
 name: Test
 
+env:
+  MSRV: 1.45.0
+
 jobs:
   test-linux:
     runs-on: ubuntu-latest
@@ -12,7 +15,7 @@ jobs:
         rust:
           - stable
           - beta
-          - 1.43.0
+          - ${{ env.MSRV }}
         experimental: [false]
         include:
           - rust: nightly
@@ -29,6 +32,10 @@ jobs:
           toolchain: ${{ matrix.rust }}
           override: true
           components: rustfmt, clippy
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install libudev-dev
 
       - uses: actions-rs/cargo@v1
         name: Check
@@ -61,7 +68,7 @@ jobs:
         rust:
           - stable
           - beta
-          - 1.43.0
+          - ${{ env.MSRV }}
         experimental: [false]
         include:
           - rust: nightly
@@ -110,7 +117,7 @@ jobs:
         rust:
           - stable
           - beta
-          - 1.43.0
+          - ${{ env.MSRV }}
         experimental: [false]
         include:
           - rust: nightly
